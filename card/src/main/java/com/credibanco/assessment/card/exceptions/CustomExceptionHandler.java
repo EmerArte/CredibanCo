@@ -1,5 +1,6 @@
 package com.credibanco.assessment.card.exceptions;
 
+import com.credibanco.assessment.card.dto.ResponseModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -32,7 +33,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
             log.error("Invalid {} value submitted for {}", fieldError.getRejectedValue(), fieldError.getField());
             errors.append(String.format(Objects.requireNonNull(fieldError.getDefaultMessage()), fieldError.getField())).append(" | ");
         });
-        return handleExceptionInternal(ex, new ExceptionModel<>(HttpStatus.BAD_REQUEST.value(),
+        return handleExceptionInternal(ex, new ResponseModel<>(String.valueOf(HttpStatus.BAD_REQUEST.value()),
                 errors.toString(), null), new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
     }
 

@@ -27,11 +27,11 @@ public class TarjetaModel implements Serializable {
     private String titular;
     @Column(length = 15, nullable = false)
     private Long cedula;
-    @Column(nullable = false)
+    @Column(length = 15,nullable = false)
     private String tipo;
     @Column(length = 10, nullable = false)
     private String telefono;
-    @Column(columnDefinition = "default 'Creada'", nullable = false)
+    @Column(columnDefinition = "varchar(10) default 'Creada'", nullable = false)
     private String estado;
 
 }

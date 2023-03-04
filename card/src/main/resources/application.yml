@@ -1,1 +1,17 @@
-
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/bank?allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: emer2009
+  jpa:
+    hibernate:
+      ddl-auto: validate
+server:
+  servlet:
+    context-path: "/bank"
+  port: 8080
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

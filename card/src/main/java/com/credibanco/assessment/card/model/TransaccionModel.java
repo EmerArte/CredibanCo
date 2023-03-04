@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 @Entity
+@Table(name = "TRANSACCION")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -18,8 +19,8 @@ public class TransaccionModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long referencia;
+    @Column(length = 19, nullable = false)
     private String pan;
-
     @CreationTimestamp
     private LocalDateTime fechaCreacion;
 }

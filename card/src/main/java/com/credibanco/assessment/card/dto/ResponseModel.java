@@ -1,21 +1,21 @@
-package com.credibanco.assessment.card.exceptions;
+package com.credibanco.assessment.card.dto;
 
-public class ExceptionModel<T> {
-    private int codigo;
+public class ResponseModel<T> {
+    private String codigo;
     private String mensaje;
     private T data;
 
-    public ExceptionModel(int codigo, String mensaje, T data) {
+    public ResponseModel(String codigo, String mensaje, T data) {
         this.codigo = codigo;
         this.mensaje = mensaje;
         this.data = data;
     }
 
-    public int getCodigo() {
+    public String getCodigo() {
         return codigo;
     }
 
-    public void setCodigo(int codigo) {
+    public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
 
