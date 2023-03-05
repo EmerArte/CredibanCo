@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
@@ -33,5 +34,6 @@ public class TarjetaModel implements Serializable {
     private String telefono;
     @Column(columnDefinition = "varchar(10) default 'Creada'", nullable = false)
     private String estado;
+
 
 }

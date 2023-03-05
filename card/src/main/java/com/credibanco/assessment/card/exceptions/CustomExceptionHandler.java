@@ -22,7 +22,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {BankException.class})
     protected ResponseEntity<Object> handleAppException(BankException ex, WebRequest request) {
         log.error("{}", ex.getMessage());
-        return handleExceptionInternal(ex, ex.getResponse(), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+        return handleExceptionInternal(ex, ex.getResponse(), new HttpHeaders(), ex.getStatus(), request);
     }
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders

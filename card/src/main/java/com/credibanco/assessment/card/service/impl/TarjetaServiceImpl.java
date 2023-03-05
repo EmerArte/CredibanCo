@@ -5,10 +5,12 @@ import com.credibanco.assessment.card.exceptions.BankException;
 import com.credibanco.assessment.card.model.TarjetaModel;
 import com.credibanco.assessment.card.model.repository.TarjetaRepository;
 import com.credibanco.assessment.card.service.TarjetaService;
+import com.credibanco.assessment.card.utils.constants.Constants;
+import com.credibanco.assessment.card.utils.Utility;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,22 +26,22 @@ public class TarjetaServiceImpl implements TarjetaService {
             tarjeta.setEstado("Creada");
             TarjetaModel save = repository.save(toModel(tarjeta));
             TarjetaDto response = toDto(save);
-            response.setPan(enmascararPan(save.getPan()));
+            response.setPan(Utility.enmascararPan(save.getPan()));
             return response;
     }
 
     @Override
     public TarjetaDto activarTarjeta(String pan, int enroll) throws BankException {
             Long panNumber = Long.parseLong(pan);
-            TarjetaModel tarjeta = this.repository.findById(panNumber).orElseThrow(()-> new BankException("01", "Tarjeta no existe"));
+            TarjetaModel tarjeta = this.repository.findById(panNumber).orElseThrow(()-> new BankException("01", Constants.TARJETA_NO_ENCONTRADA, HttpStatus.NOT_FOUND));
             if(tarjeta.getEnroll() == enroll){
                 tarjeta.setEstado("Enrolada");
                 TarjetaModel update = this.repository.save(tarjeta);
                 TarjetaDto response = toDto(update);
-                response.setPan(enmascararPan(update.getPan()));
+                response.setPan(Utility.enmascararPan(update.getPan()));
                 return response;
             }else {
-                throw new BankException("02","Número de validación inválido");
+                throw new BankException("02",Constants.NUM_VALIDACION_NO_VALIDA, HttpStatus.BAD_REQUEST);
             }
 
 
@@ -48,19 +50,19 @@ public class TarjetaServiceImpl implements TarjetaService {
     @Override
     public TarjetaDto getTarjeta(String pan) throws BankException {
         if(pan.matches("^[0-9]+$")){
-            TarjetaModel tarjeta = this.repository.findById(Long.valueOf(pan)).orElseThrow(()-> new BankException("01", "Tarjeta no existe"));
+            TarjetaModel tarjeta = this.repository.findById(Long.valueOf(pan)).orElseThrow(()-> new BankException("01", Constants.TARJETA_NO_ENCONTRADA, HttpStatus.NOT_FOUND));
             TarjetaDto response = toDto(tarjeta);
-            response.setPan(enmascararPan(tarjeta.getPan()));
+            response.setPan(Utility.enmascararPan(tarjeta.getPan()));
             return response;
         }else {
-            throw new BankException("02","Número de validación inválido");
+            throw new BankException("02",Constants.NUM_VALIDACION_NO_VALIDA, HttpStatus.BAD_REQUEST);
         }
     }
 
     @Override
     public boolean eliminarTarjeta(String pan, int enroll) throws BankException {
         Long panNumber = Long.parseLong(pan);
-        TarjetaModel tarjeta = this.repository.findById(panNumber).orElseThrow(()-> new BankException("02", "Tarjeta no existe"));
+        TarjetaModel tarjeta = this.repository.findById(panNumber).orElseThrow(()-> new BankException("02", Constants.TARJETA_NO_ENCONTRADA, HttpStatus.NOT_FOUND));
         if(tarjeta.getEnroll() == enroll){
             try{
                 this.repository.delete(tarjeta);
@@ -68,8 +70,8 @@ public class TarjetaServiceImpl implements TarjetaService {
             }catch (Exception e){
                 return false;
             }
-        }else {
-            throw new BankException("01","No se ha eliminado la tarjeta");
+        }else{
+            throw new BankException("01","No se ha eliminado la tarjeta", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -79,22 +81,13 @@ public class TarjetaServiceImpl implements TarjetaService {
         Collection<TarjetaModel> dataBaseCollection = this.repository.findAll();
         dataBaseCollection.forEach(tarjetaModel ->{
                 TarjetaDto dto = toDto(tarjetaModel);
-                dto.setPan(enmascararPan(tarjetaModel.getPan()));
+                dto.setPan(Utility.enmascararPan(tarjetaModel.getPan()));
                 responseList.add(dto);
                 }
         );
         return responseList;
     }
 
-
-    private String enmascararPan(@NotNull Long pan){
-        String unmask = String.valueOf(pan);
-        char[] caracteres = unmask.toCharArray();
-        for (int i=6; i<=caracteres.length - 5; i++ ){
-            caracteres[i] = '*';
-        }
-        return new String(caracteres);
-    }
 
     private int generarEnroll() {
         return ThreadLocalRandom.current().nextInt(1, 100 + 1);
